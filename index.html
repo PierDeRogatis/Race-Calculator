@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Fuel Strategy Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #4f46e5;
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #ai-insights-content h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        #ai-insights-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        #ai-insights-content p {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Race Fuel Strategy Dashboard</h1>
+            <p class="text-gray-600 mt-2">Plan your nutrition and pacing for peak performance.</p>
+        </header>
+
+        <main class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <!-- Settings Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 mb-8">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Your Target Finish Time</label>
+                    <div class="flex items-center space-x-2 mt-1">
+                        <input type="number" id="targetTimeHours" value="10" min="0" class="block w-full bg-gray-50 border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Hrs">
+                        <span class="text-gray-500">:</span>
+                        <input type="number" id="targetTimeMins" value="30" min="0" max="59" class="block w-full bg-gray-50 border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Mins">
+                    </div>
+                </div>
+                <div>
+                    <label for="checkpoints" class="block text-sm font-medium text-gray-700">Number of Checkpoints</label>
+                    <input type="number" id="checkpoints" min="1" class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                
+                <!-- Strategy Sliders -->
+                <div class="col-span-1 md:col-span-2 space-y-6 pt-4">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Pacing Strategy & Conditions</h3>
+                     <div>
+                        <label for="pacingStrategy" class="block text-sm font-medium text-gray-700">Overall Strategy</label>
+                        <input type="range" id="pacingStrategy" min="-10" max="10" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>Conservative Start</span>
+                            <span>Even Split</span>
+                            <span>Aggressive Start</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="uphillEffort" class="block text-sm font-medium text-gray-700">Uphill Effort</label>
+                        <input type="range" id="uphillEffort" min="-10" max="10" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                         <div class="flex justify-between text-xs text-gray-500">
+                            <span>Conserve</span>
+                            <span>Neutral</span>
+                            <span>Push</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="downhillEffort" class="block text-sm font-medium text-gray-700">Downhill Effort</label>
+                        <input type="range" id="downhillEffort" min="-10" max="10" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                         <div class="flex justify-between text-xs text-gray-500">
+                            <span>Recover</span>
+                            <span>Neutral</span>
+                            <span>Attack</span>
+                        </div>
+                    </div>
+                     <div>
+                        <label for="temperature" class="block text-sm font-medium text-gray-700">Estimated Temperature (°C)</label>
+                        <input type="range" id="temperature" min="0" max="35" value="15" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                         <div class="flex justify-between text-xs text-gray-500">
+                            <span>Cool (0°C)</span>
+                            <span>Moderate (17°C)</span>
+                            <span>Hot (35°C)</span>
+                        </div>
+                    </div>
+                    <div id="calculated-pace-display" class="hidden text-center p-2 bg-indigo-50 rounded-lg">
+                        <span class="font-medium text-indigo-800">Required Average Pace:</span>
+                        <span id="calculated-pace-value" class="font-bold text-indigo-900"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Checkpoint Inputs -->
+            <div id="checkpoint-inputs" class="space-y-6"></div>
+
+            <!-- Action Button -->
+            <div class="mt-8 text-center">
+                <button id="calculateBtn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-indigo-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Generate Initial Plan
+                </button>
+            </div>
+
+             <!-- Results Section -->
+            <div id="results" class="mt-10 hidden fade-in">
+                <h2 class="text-2xl font-bold text-center mb-6">Your Race Strategy</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Split</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Carbs (g)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Water (ml)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Electrolytes (mg)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-body" class="bg-white divide-y divide-gray-200"></tbody>
+                        <tfoot class="bg-gray-100 font-bold">
+                            <tr id="results-total"></tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button id="getAiInsightsBtn" class="hidden bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:opacity-90 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        ✨ Get AI-Powered Race Insights
+                    </button>
+                </div>
+
+                <div id="ai-insights-container" class="mt-6 hidden fade-in">
+                    <div id="ai-insights-loading" class="flex justify-center items-center p-4">
+                        <div class="spinner"></div>
+                        <p class="ml-4 text-gray-600">Generating your personalized race plan...</p>
+                    </div>
+                    <div id="ai-insights-content" class="hidden bg-gray-50 p-6 rounded-lg border"></div>
+                     <div id="ai-insights-error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-relative" role="alert">
+                        <strong class="font-bold">Oops!</strong>
+                        <span class="block sm:inline">Something went wrong. Please try again.</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // DOM Elements
+        const checkpointsInput = document.getElementById('checkpoints');
+        const checkpointInputsContainer = document.getElementById('checkpoint-inputs');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultsSection = document.getElementById('results');
+        const resultsBody = document.getElementById('results-body');
+        const resultsTotal = document.getElementById('results-total');
+        const targetTimeHoursInput = document.getElementById('targetTimeHours');
+        const targetTimeMinsInput = document.getElementById('targetTimeMins');
+        const getAiInsightsBtn = document.getElementById('getAiInsightsBtn');
+        const aiInsightsContainer = document.getElementById('ai-insights-container');
+        const aiInsightsLoading = document.getElementById('ai-insights-loading');
+        const aiInsightsContent = document.getElementById('ai-insights-content');
+        const aiInsightsError = document.getElementById('ai-insights-error');
+        const pacingStrategySlider = document.getElementById('pacingStrategy');
+        const uphillEffortSlider = document.getElementById('uphillEffort');
+        const downhillEffortSlider = document.getElementById('downhillEffort');
+        const temperatureSlider = document.getElementById('temperature');
+        const calculatedPaceDisplay = document.getElementById('calculated-pace-display');
+        const calculatedPaceValue = document.getElementById('calculated-pace-value');
+
+
+        let raceDataForAI = {};
+        
+        // Event Listeners
+        checkpointsInput.addEventListener('input', generateCheckpointInputs);
+        calculateBtn.addEventListener('click', runCalculationsAndUpdateUI);
+        getAiInsightsBtn.addEventListener('click', fetchAiInsights);
+
+        [targetTimeHoursInput, targetTimeMinsInput, pacingStrategySlider, uphillEffortSlider, downhillEffortSlider, temperatureSlider].forEach(el => {
+            el.addEventListener('input', () => {
+                if (!resultsSection.classList.contains('hidden')) {
+                    runCalculationsAndUpdateUI();
+                }
+            });
+        });
+
+        function generateCheckpointInputs() {
+            const numCheckpoints = parseInt(checkpointsInput.value);
+            checkpointInputsContainer.innerHTML = '';
+            resultsSection.classList.add('hidden');
+            getAiInsightsBtn.classList.add('hidden');
+            aiInsightsContainer.classList.add('hidden');
+            calculatedPaceDisplay.classList.add('hidden');
+            
+            if (numCheckpoints > 0 && numCheckpoints < 50) { // Limit to 50 checkpoints
+                calculateBtn.disabled = false;
+                for (let i = 1; i <= numCheckpoints; i++) {
+                    const div = document.createElement('div');
+                    div.classList.add('grid', 'grid-cols-1', 'md:grid-cols-4', 'gap-4', 'p-4', 'border', 'rounded-lg', 'fade-in');
+                    div.innerHTML = `
+                        <h3 class="md:col-span-1 text-lg font-semibold self-center">Split ${i}</h3>
+                        <div class="md:col-span-1">
+                            <label for="distance-${i}" class="block text-sm font-medium text-gray-600">Distance (km)</label>
+                            <input type="number" id="distance-${i}" class="mt-1 block w-full bg-gray-50 border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 10">
+                        </div>
+                        <div class="md:col-span-1">
+                            <label for="gain-${i}" class="block text-sm font-medium text-gray-600">Elevation Gain (m)</label>
+                            <input type="number" id="gain-${i}" class="mt-1 block w-full bg-gray-50 border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 200">
+                        </div>
+                        <div class="md:col-span-1">
+                            <label for="loss-${i}" class="block text-sm font-medium text-gray-600">Elevation Loss (m)</label>
+                            <input type="number" id="loss-${i}" class="mt-1 block w-full bg-gray-50 border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 150">
+                        </div>
+                    `;
+                    checkpointInputsContainer.appendChild(div);
+                }
+            } else {
+                calculateBtn.disabled = true;
+            }
+        }
+
+        function calculateSingleSplitTime(basePace, splitData, splitProgress, sliders) {
+            const { distance, gain, loss } = splitData;
+            const { pacingStrategy, uphillEffort, downhillEffort, temperature } = sliders;
+
+            if (distance <= 0) return 0;
+
+            // 1. Start with base pace and apply overall pacing strategy (neg/pos split)
+            const paceStrategyMultiplier = 1 - (pacingStrategy * 0.02) * (1 - 2 * splitProgress);
+            let adjustedPace = basePace * paceStrategyMultiplier;
+
+            // 2. Calculate Terrain Pace Multiplier (The new core logic)
+            let terrainMultiplier = 1.0;
+            if (gain > 0) {
+                const grade = (gain / (distance * 1000)) * 100;
+                // Exponential penalty for uphill. Effort slider adjusts the exponent's base.
+                const uphillEffortFactor = 2.0 - (uphillEffort * 0.05); // Range ~[1.5, 2.5]
+                const uphillPenalty = Math.pow(1.0 + grade / 10, uphillEffortFactor);
+                terrainMultiplier *= uphillPenalty;
+            }
+            if (loss > 0) {
+                const slopeDegrees = Math.atan(loss / (distance * 1000)) * (180 / Math.PI);
+                // Effort slider adjusts the "sweet spot" for downhills
+                const downhillEffortFactor = downhillEffort * 0.3; // Range ~[-3, 3]
+                const maxBenefitSlope = 8.0 - downhillEffortFactor; // Attackers find benefit on steeper slopes
+                const neutralSlope = 14.0 - downhillEffortFactor;
+                
+                let downhillFactor = 1.0;
+                // Curve: benefit -> neutral -> penalty
+                if (slopeDegrees <= maxBenefitSlope) {
+                    // Max benefit of ~20%
+                    downhillFactor = 1 - 0.2 * (slopeDegrees / maxBenefitSlope);
+                } else if (slopeDegrees <= neutralSlope) {
+                    // Benefit decreases to zero
+                    downhillFactor = 0.8 + 0.2 * ((slopeDegrees - maxBenefitSlope) / (neutralSlope - maxBenefitSlope));
+                } else {
+                    // Penalty increases past neutral
+                    downhillFactor = 1.0 + (slopeDegrees - neutralSlope) * 0.04;
+                }
+                terrainMultiplier *= downhillFactor;
+            }
+            adjustedPace *= terrainMultiplier;
+            
+            // 3. Apply Fatigue Factor
+            const fatigueCoefficient = 0.15;
+            const fatigueFactor = 1 + Math.pow(splitProgress, 2) * fatigueCoefficient;
+            adjustedPace *= fatigueFactor;
+
+            // 4. Apply Temperature Factor
+            let tempPaceFactor = 1.0;
+            if (temperature > 28) tempPaceFactor = 1 + (temperature - 28) * 0.01;
+            if (temperature < 5) tempPaceFactor = 1 + (5 - temperature) * 0.005;
+            adjustedPace *= tempPaceFactor;
+            
+            return distance * adjustedPace;
+        }
+
+        function calculateTotalTimeForPace(basePace, checkpointData, sliders) {
+            let totalTime = 0;
+            let cumulativeDistance = 0;
+            const totalDistance = checkpointData.reduce((acc, curr) => acc + curr.distance, 0);
+            
+            if (totalDistance <= 0) return 0;
+
+            for (let i = 0; i < checkpointData.length; i++) {
+                const splitProgress = cumulativeDistance / totalDistance;
+                totalTime += calculateSingleSplitTime(basePace, checkpointData[i], splitProgress, sliders);
+                cumulativeDistance += checkpointData[i].distance;
+            }
+            return totalTime;
+        }
+
+        function findBestPaceForTargetTime(targetTimeInMinutes, checkpointData, sliders) {
+            let basePace = 7.0; // Initial guess: 7 min/km
+            const iterations = 20;
+
+            for (let i = 0; i < iterations; i++) {
+                const calculatedTime = calculateTotalTimeForPace(basePace, checkpointData, sliders);
+                if (Math.abs(calculatedTime - targetTimeInMinutes) < 0.01) { break; }
+                if (calculatedTime > 0) {
+                    basePace *= (targetTimeInMinutes / calculatedTime);
+                } else {
+                    basePace = 10; // Reset if calculation fails
+                    break;
+                }
+            }
+            return basePace;
+        }
+
+        function runCalculationsAndUpdateUI() {
+            const numCheckpoints = parseInt(checkpointsInput.value);
+            if (!numCheckpoints) return;
+            
+            const targetHours = parseFloat(targetTimeHoursInput.value) || 0;
+            const targetMins = parseFloat(targetTimeMinsInput.value) || 0;
+            const targetTime = targetHours * 60 + targetMins;
+
+            const sliders = {
+                pacingStrategy: parseInt(pacingStrategySlider.value),
+                uphillEffort: parseInt(uphillEffortSlider.value),
+                downhillEffort: parseInt(downhillEffortSlider.value),
+                temperature: parseInt(temperatureSlider.value)
+            };
+
+            const checkpointData = [];
+            let totalDistance = 0;
+            for (let i = 1; i <= numCheckpoints; i++) {
+                const distance = parseFloat(document.getElementById(`distance-${i}`).value) || 0;
+                const gain = parseFloat(document.getElementById(`gain-${i}`).value) || 0;
+                const loss = parseFloat(document.getElementById(`loss-${i}`).value) || 0;
+                totalDistance += distance;
+                checkpointData.push({ distance, gain, loss });
+            }
+
+            if (totalDistance <= 0 || targetTime <= 0) return;
+
+            const basePace = findBestPaceForTargetTime(targetTime, checkpointData, sliders);
+            
+            generatePlanFromPace(basePace, checkpointData, sliders);
+        }
+
+        function generatePlanFromPace(basePace, checkpointData, sliders) {
+            const { temperature } = sliders;
+            const numCheckpoints = checkpointData.length;
+
+            const CARBS_PER_HOUR = 60;
+            const BASE_WATER_PER_HOUR = 600; 
+            const BASE_SODIUM_PER_HOUR = 450;
+            const TEMP_BASELINE = 15;
+
+            resultsBody.innerHTML = '';
+            let totalTime = 0, totalCarbs = 0, totalWater = 0, totalSalts = 0;
+            let totalGain = 0, totalLoss = 0, totalDistance = 0, cumulativeDistance = 0;
+            let splits = [];
+
+            const tempDelta = temperature - TEMP_BASELINE;
+            const waterMultiplier = 1 + (tempDelta * 0.05);
+            const sodiumMultiplier = 1 + (tempDelta * 0.06);
+            let carbsMultiplier = 1.0;
+            if (tempDelta < 0) {
+                carbsMultiplier = 1 + (-tempDelta * 0.015);
+            }
+
+            const courseTotalDistance = checkpointData.reduce((acc, curr) => acc + curr.distance, 0);
+            if (courseTotalDistance <= 0) return;
+
+            for (let i = 0; i < numCheckpoints; i++) {
+                const splitData = checkpointData[i];
+                const { distance, gain, loss } = splitData;
+
+                const splitProgress = cumulativeDistance / courseTotalDistance;
+                const splitTime = calculateSingleSplitTime(basePace, splitData, splitProgress, sliders);
+                
+                const splitTimeHours = splitTime / 60;
+                const splitCarbs = Math.round(splitTimeHours * CARBS_PER_HOUR * carbsMultiplier);
+                const splitWater = Math.round(splitTimeHours * BASE_WATER_PER_HOUR * waterMultiplier);
+                const splitSalts = Math.round(splitTimeHours * BASE_SODIUM_PER_HOUR * sodiumMultiplier);
+
+                totalTime += splitTime; totalCarbs += splitCarbs; totalWater += splitWater; totalSalts += splitSalts;
+                totalGain += gain; totalLoss += loss; totalDistance += distance;
+                splits.push({distance, gain, loss, time: splitTime, carbs: splitCarbs, water: splitWater, salts: splitSalts });
+                cumulativeDistance += distance;
+
+                const row = document.createElement('tr');
+                row.classList.add('fade-in');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="font-semibold">Start to CP ${i+1}</span><br><span class="text-sm text-gray-500">${distance}km, +${gain}m, -${loss}m</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium">${formatTime(splitTime)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${splitCarbs} g</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${splitWater} ml</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${splitSalts} mg</td>
+                `;
+                resultsBody.appendChild(row);
+            }
+            
+            resultsTotal.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-right font-bold uppercase">Total</td>
+                <td class="px-6 py-4 whitespace-nowrap">${formatTime(totalTime)}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${totalCarbs} g</td>
+                <td class="px-6 py-4 whitespace-nowrap">${totalWater} ml</td>
+                <td class="px-6 py-4 whitespace-nowrap">${totalSalts} mg</td>
+            `;
+            
+            const paceMinutes = Math.floor(basePace);
+            const paceSeconds = Math.round((basePace - paceMinutes) * 60);
+            calculatedPaceValue.textContent = `${paceMinutes.toString().padStart(2, '0')}:${paceSeconds.toString().padStart(2, '0')} min/km`;
+            calculatedPaceDisplay.classList.remove('hidden');
+
+            raceDataForAI = { totalDistance, totalGain, totalLoss, totalTime, totalCarbs, totalWater, totalSalts, splits, ...sliders };
+            
+            resultsSection.classList.remove('hidden');
+            getAiInsightsBtn.classList.remove('hidden');
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+        
+        async function fetchAiInsights() {
+            aiInsightsContainer.classList.remove('hidden');
+            aiInsightsLoading.style.display = 'flex';
+            aiInsightsContent.classList.add('hidden');
+            aiInsightsError.classList.add('hidden');
+
+            const apiKey = ""; // Canvas handles this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            
+            const getStrategyText = (value, options) => {
+                if (value > 3) return options[2]; if (value < -3) return options[0]; return options[1];
+            }
+            const pacingText = getStrategyText(raceDataForAI.pacingStrategy, ["Conservative Start (Negative Split)", "Even Split", "Aggressive Start (Positive Split)"]);
+            const uphillText = getStrategyText(raceDataForAI.uphillEffort, ["Conserve on Uphills", "Neutral Uphill Effort", "Push on Uphills"]);
+            const downhillText = getStrategyText(raceDataForAI.downhillEffort, ["Recover on Downhills", "Neutral Downhill Effort", "Attack Downhills"]);
+
+            const systemPrompt = `You are an expert ultramarathon and trail running coach. You provide clear, encouraging, and actionable advice. Analyze the provided race data and the runner's chosen strategy. Generate a concise race plan covering three key areas: **Pacing Strategy**, **Nutrition & Hydration**, and **Mental Preparation**. The advice should directly relate to the runner's data (especially temperature, hydration, and salt needs) and strategic choices. Format the response using markdown with ## for headings.`;
+            
+            const userQuery = `
+                Here is my race plan. Please provide a personalized coaching strategy.
+
+                **Race Overview:**
+                - Total Distance: ${raceDataForAI.totalDistance.toFixed(1)} km
+                - Total Elevation Gain: ${raceDataForAI.totalGain} m
+                - Estimated Time: ${formatTime(raceDataForAI.totalTime)}
+                - Estimated Temperature: ${raceDataForAI.temperature}°C
+
+                **My Fuel & Hydration Plan:**
+                - Total Carbs: ${raceDataForAI.totalCarbs}g
+                - Total Water: ${raceDataForAI.totalWater} ml
+                - Total Electrolytes: ${raceDataForAI.totalSalts} mg
+
+                **My Chosen Strategy:**
+                - Pacing: ${pacingText}
+                - Uphills: ${uphillText}
+                - Downhills: ${downhillText}
+                
+                **Splits Breakdown:**
+                ${raceDataForAI.splits.map((s, i) => `- Split ${i+1}: ${s.distance.toFixed(1)}km, +${s.gain}m, Est. Time: ${formatTime(s.time)}`).join('\n')}
+            `;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    const text = candidate.content.parts[0].text;
+                    aiInsightsContent.innerHTML = marked.parse(text);
+                    aiInsightsContent.classList.remove('hidden');
+                } else {
+                    throw new Error("Invalid response from API.");
+                }
+            } catch (error) {
+                console.error("Error fetching AI insights:", error);
+                aiInsightsError.classList.remove('hidden');
+            } finally {
+                aiInsightsLoading.style.display = 'none';
+            }
+        }
+
+        function formatTime(minutes) {
+            if (minutes < 0) return "00:00:00";
+            const hours = Math.floor(minutes / 60);
+            const mins = Math.floor(minutes % 60);
+            const secs = Math.round((minutes - Math.floor(minutes)) * 60);
+            const pad = (num) => num.toString().padStart(2, '0');
+            return `${pad(hours)}:${pad(mins)}:${pad(secs)}`;
+        }
+    </script>
+
+</body>
+</html>
+

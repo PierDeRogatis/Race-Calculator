@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Strategy Modeler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Login View -->
+    <div id="login-view" class="flex items-center justify-center min-h-screen py-12">
+        <div class="text-center p-8 bg-gray-800/50 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-md mx-auto">
+            <h2 class="text-xl font-semibold text-sky-400">WatchForward.co</h2>
+            <h1 class="text-4xl font-bold text-gray-50 mt-2">Race Strategy Modeler</h1>
+            <p class="text-gray-400 mt-3 mb-6">Sign in to manage your race plans.</p>
+            <div class="space-y-4 text-left">
+                <input type="email" id="emailInput" placeholder="Email" class="w-full bg-gray-900 border border-gray-700 rounded-lg shadow-sm p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500">
+                <input type="password" id="passwordInput" placeholder="Password" class="w-full bg-gray-900 border border-gray-700 rounded-lg shadow-sm p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500">
+                <div class="flex justify-between items-center pt-1">
+                    <p id="auth-error" class="text-red-400 text-sm h-4"></p>
+                    <button id="resetPasswordBtn" class="text-sm text-sky-400 hover:text-sky-300 transition-colors">Forgot Password?</button>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 mt-6">
+                <button id="signInEmailBtn" class="w-full bg-sky-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-sky-500/20 hover:bg-sky-600 transition-all transform hover:scale-105">Sign In</button>
+                <button id="signUpEmailBtn" class="w-full bg-gray-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-700 transition-all">Create Account</button>
+            </div>
+            <div class="relative flex py-5 items-center">
+                <div class="flex-grow border-t border-gray-600"></div><span class="flex-shrink mx-4 text-gray-500">OR</span><div class="flex-grow border-t border-gray-600"></div>
+            </div>
+            <button id="signInBtn" class="bg-white text-gray-800 font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-200 transition-all transform hover:scale-105 flex items-center mx-auto">
+                <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.443-2.61 4.478-4.998 5.623l6.19 5.238C41.346 34.657 44 29.832 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main App Container -->
+    <div id="app-container" class="hidden">
+        <header class="container mx-auto p-4 md:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="text-center md:text-left">
+                <h2 class="text-xl font-semibold text-sky-400">WatchForward.co</h2>
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-50 mt-2">Race Strategy Modeler</h1>
+            </div>
+            <div id="user-profile" class="flex items-center gap-4 mt-4 md:mt-0"></div>
+        </header>
+
+        <!-- Main Modeler View -->
+        <div id="app-view" class="container mx-auto p-4 md:p-8 max-w-5xl">
+            <main class="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-8 border border-gray-700">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                    <h3 class="text-xl font-semibold text-gray-100">Course Data Input</h3>
+                    <div id="plan-management" class="flex items-center gap-4">
+                        <select id="savedPlansDropdown" class="bg-gray-900 border border-gray-700 rounded-lg p-3 focus:ring-sky-500 focus:border-sky-500"></select>
+                        <button id="managePlansBtn" class="text-sky-400 hover:text-sky-300 font-semibold">Manage Plans</button>
+                    </div>
+                </div>
+                <div class="text-center mb-8">
+                    <div class="flex items-center justify-center gap-2">
+                         <div class="flex-grow border-t border-gray-600"></div><span class="text-gray-500">IMPORT A COURSE</span><div class="flex-grow border-t border-gray-600"></div>
+                    </div>
+                    <div class="flex items-center justify-center gap-4 mt-4">
+                        <label for="gpxFile" class="bg-sky-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-sky-500/20 hover:bg-sky-600 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-sky-500/50 cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>Import Your GPX</label>
+                        <input type="file" id="gpxFile" class="hidden" accept=".gpx">
+                    </div>
+                    <div class="text-center mt-4">
+                        <span class="text-gray-400">or enter splits manually:</span>
+                        <input type="number" id="checkpoints" min="1" placeholder="# Splits" class="w-32 bg-gray-900 border border-gray-700 rounded-lg shadow-sm p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500 ml-2">
+                    </div>
+                    <p id="gpx-status" class="text-sm text-gray-500 mt-2 h-5"></p>
+                </div>
+                <div id="chart-section" class="mb-8 hidden fade-in">
+                    <h3 class="text-xl font-semibold text-gray-100 border-b border-gray-700 pb-3 mb-4">Course Profile</h3>
+                    <div class="chart-container bg-gray-900/20 p-4 rounded-lg border border-gray-700"><canvas id="courseProfileChart"></canvas></div>
+                </div>
+                <div id="checkpoint-inputs" class="space-y-6"></div>
+                <div id="strategy-section" class="hidden fade-in col-span-1 md:col-span-2 space-y-8 pt-8 mt-8 border-t border-gray-700">
+                    <h3 class="text-xl font-semibold text-gray-100">Strategy & Conditions Modeling</h3>
+                    <div><label for="pacingStrategy" class="block text-sm font-medium text-gray-400">Overall Strategy</label><input type="range" id="pacingStrategy" min="-10" max="10" value="0" class="w-full mt-2"><div class="flex justify-between text-xs text-gray-500 mt-1"><span>Conservative Start</span><span>Even Split</span><span>Aggressive Start</span></div></div>
+                    <div><label for="uphillEffort" class="block text-sm font-medium text-gray-400">Uphill Effort</label><input type="range" id="uphillEffort" min="-10" max="10" value="0" class="w-full mt-2"><div class="flex justify-between text-xs text-gray-500 mt-1"><span>Conserve</span><span>Neutral</span><span>Push</span></div></div>
+                    <div><label for="downhillEffort" class="block text-sm font-medium text-gray-400">Downhill Effort</label><input type="range" id="downhillEffort" min="-10" max="10" value="0" class="w-full mt-2"><div class="flex justify-between text-xs text-gray-500 mt-1"><span>Recover</span><span>Neutral</span><span>Attack</span></div></div>
+                    <div><label for="temperature" class="block text-sm font-medium text-gray-400">Estimated Temperature (°C)</label><input type="range" id="temperature" min="0" max="35" value="15" class="w-full mt-2"><div class="flex justify-between text-xs text-gray-500 mt-1"><span>Cool (0°C)</span><span>Moderate (17°C)</span><span>Hot (35°C)</span></div></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        <div><label class="block text-sm font-medium text-gray-400">Your Target Finish Time</label><div class="flex items-center space-x-2 mt-2"><input type="number" id="targetTimeHours" value="10" min="0" class="block w-full bg-gray-900 border border-gray-700 rounded-lg shadow-sm p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"><span class="text-gray-500 font-bold">:</span><input type="number" id="targetTimeMins" value="30" min="0" max="59" class="block w-full bg-gray-900 border border-gray-700 rounded-lg shadow-sm p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div></div>
+                        <div id="calculated-pace-display" class="hidden self-end text-center p-3 bg-gray-900/50 border border-gray-700 rounded-lg"><span class="font-medium text-sky-400">Required Flat-Ground Pace:</span><span id="calculated-pace-value" class="font-bold text-gray-50 ml-2"></span></div>
+                    </div>
+                    <div class="mt-4 text-center"><button id="calculateBtn" class="bg-gradient-to-r from-sky-500 to-cyan-400 text-white font-bold py-3 px-10 rounded-lg shadow-lg shadow-sky-500/20 hover:opacity-90 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-sky-500/50">Generate Strategy</button></div>
+                </div>
+                <div id="results" class="mt-12 hidden fade-in">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <h2 class="text-3xl font-bold text-gray-50">Your Race Strategy</h2>
+                        <div class="flex items-center gap-3">
+                            <button id="savePlanBtn" class="bg-gray-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" /></svg>Save</button>
+                            <button id="downloadPdfBtn" class="bg-gray-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>Download</button>
+                            <button id="sharePlanBtn" class="bg-gray-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" /></svg>Share</button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto bg-gray-900/50 border border-gray-700 rounded-xl"><table class="min-w-full"><thead class="border-b border-gray-700"><tr><th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Split</th><th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Time</th><th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Pace</th><th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Carbs (g)</th><th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Water (ml)</th><th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Electrolytes (mg)</th></tr></thead><tbody id="results-body" class="divide-y divide-gray-800"></tbody><tfoot class="border-t-2 border-gray-700 font-bold"><tr id="results-total"></tr></tfoot></table></div>
+                    <div class="mt-10 text-center"><button id="getAiInsightsBtn" class="hidden bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-pink-500/20 hover:opacity-90 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-500/50">✨ Get AI-Powered Coaching</button></div>
+                    <div id="ai-insights-container" class="mt-8 hidden fade-in"><div id="ai-insights-loading" class="flex justify-center items-center p-4"><div class="spinner"></div><p class="ml-4 text-gray-400">Generating your personalized race plan...</p></div><div id="ai-insights-content" class="hidden bg-gray-900/50 p-6 rounded-lg border border-gray-700"></div><div id="ai-insights-error" class="hidden bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded-relative" role="alert"><strong class="font-bold">Oops!</strong><span class="block sm:inline">Something went wrong. Please try again.</span></div></div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Plan Management View -->
+        <div id="plan-management-view" class="container mx-auto p-4 md:p-8 max-w-5xl hidden">
+             <main class="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-8 border border-gray-700">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-50">Manage Your Race Plans</h2>
+                    <button id="backToModelerBtn" class="bg-gray-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-gray-700 transition-colors">Back to Modeler</button>
+                </div>
+                <div id="plan-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Plan cards will be injected here -->
+                </div>
+             </main>
+        </div>
+
+        <!-- Profile/Preferences View -->
+        <div id="profile-view" class="container mx-auto p-4 md:p-8 max-w-5xl hidden">
+             <main class="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-8 border border-gray-700">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-50">Your Profile & Preferences</h2>
+                    <button id="backToModelerBtn-from-profile" class="bg-gray-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-gray-700 transition-colors">Back to Modeler</button>
+                </div>
+                <div class="space-y-8 max-w-lg mx-auto">
+                     <div>
+                        <h3 class="text-xl font-semibold text-gray-100 border-b border-gray-700 pb-3">Public Profile</h3>
+                        <p class="text-gray-400 text-sm mt-2 mb-4">This name will be displayed on any plans you share publicly.</p>
+                         <div>
+                            <label for="prefUsername" class="block text-sm font-medium text-gray-400">Username</label>
+                            <input type="text" id="prefUsername" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-lg shadow-sm p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500">
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-100 border-b border-gray-700 pb-3">Your Metrics</h3>
+                         <p class="text-gray-400 text-sm mt-2 mb-4">Provide these details for more accurate nutrition and hydration calculations.</p>
+                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                             <div>
+                                <label for="prefWeight" class="block text-sm font-medium text-gray-400">Weight (kg)</label>
+                                <input type="number" id="prefWeight" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-lg shadow-sm p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500">
+                            </div>
+                            <div>
+                                <label for="prefHeight" class="block text-sm font-medium text-gray-400">Height (cm)</label>
+                                <input type="number" id="prefHeight" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-lg shadow-sm p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500">
+                            </div>
+                         </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-100 border-b border-gray-700 pb-3">Training & Physiology</h3>
+                        <p class="text-gray-400 text-sm mt-2 mb-4">Select the options that best describe you as an athlete.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="prefFitness" class="block text-sm font-medium text-gray-400">Fitness Level</label>
+                                <select id="prefFitness" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-lg shadow-sm p-3 focus:ring-sky-500 focus:border-sky-500">
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                    <option value="elite">Elite</option>
+                                </select>
+                            </div>
+                             <div>
+                                <label for="prefSweat" class="block text-sm font-medium text-gray-400">Sweat Rate</label>
+                                <select id="prefSweat" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-lg shadow-sm p-3 focus:ring-sky-500 focus:border-sky-500">
+                                    <option value="low">Low</option>
+                                    <option value="average">Average</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-right pt-4">
+                        <button id="savePreferencesBtn" class="bg-sky-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-sky-500/20 hover:bg-sky-600 transition-all">Save Preferences</button>
+                    </div>
+                </div>
+             </main>
+        </div>
+        
+        <!-- Course Library View -->
+        <div id="library-view" class="container mx-auto p-4 md:p-8 max-w-5xl hidden">
+             <main class="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-8 border border-gray-700">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-50">Public Course Library</h2>
+                    <button id="backToModelerBtn-from-library" class="bg-gray-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-gray-700 transition-colors">Back to Modeler</button>
+                </div>
+                
+                <div id="library-container">
+                    <!-- Library content will be injected here -->
+                </div>
+             </main>
+        </div>
+    </div>
+
+
+    <!-- Modals -->
+    <div id="notification-modal" class="hidden fixed top-5 right-5 bg-sky-500 text-white p-4 rounded-lg shadow-lg z-50 fade-in">
+        <p id="notification-message"></p>
+    </div>
+
+    <div id="save-plan-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 rounded-lg p-8 w-full max-w-md space-y-4">
+            <h3 class="text-xl font-bold text-white" id="save-modal-title">Save Your Plan</h3>
+            <div>
+                <label for="planNameInput" class="block text-sm font-medium text-gray-400">Plan Name</label>
+                <input type="text" id="planNameInput" placeholder="e.g., UTMB 2025 Goal" class="mt-1 w-full bg-gray-900 border border-gray-700 rounded-lg p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500">
+            </div>
+            <div>
+                <label for="planDateInput" class="block text-sm font-medium text-gray-400">Race Date (Optional)</label>
+                <input type="date" id="planDateInput" class="mt-1 w-full bg-gray-900 border border-gray-700 rounded-lg p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500">
+            </div>
+            <div>
+                <label for="planNotesInput" class="block text-sm font-medium text-gray-400">Personal Notes (Optional)</label>
+                <textarea id="planNotesInput" rows="3" class="mt-1 w-full bg-gray-900 border border-gray-700 rounded-lg p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500" placeholder="e.g., Lube feet at CP4, pick up drop bag..."></textarea>
+            </div>
+            <div id="save-options">
+                <label class="flex items-center text-gray-400 hidden" id="update-plan-wrapper">
+                    <input type="checkbox" id="updatePlanCheckbox" class="bg-gray-900 border-gray-600 text-sky-500 focus:ring-sky-500 h-4 w-4 rounded">
+                    <span class="ml-2">Update the existing plan</span>
+                </label>
+                 <label class="flex items-center text-gray-400 mt-3">
+                     <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                        <input type="checkbox" name="toggle" id="makePublicToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                        <label for="makePublicToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-600 cursor-pointer"></label>
+                    </div>
+                    <span class="ml-2 text-sm">Make this plan public</span>
+                </label>
+                <p class="text-xs text-gray-500 ml-12">Other users will see this plan in the Public Plans library.</p>
+            </div>
+            <div id="save-modal-error" class="text-red-400 text-sm h-4"></div>
+            <div class="flex justify-end gap-4 pt-4">
+                <button id="cancelSaveBtn" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors">Cancel</button>
+                <button id="confirmSaveBtn" class="bg-sky-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-sky-600 transition-colors">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notes-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 rounded-lg p-8 w-full max-w-lg">
+            <h3 class="text-xl font-bold text-white mb-4" id="notes-modal-title">Plan Notes</h3>
+            <div id="notes-modal-content" class="text-gray-300 bg-gray-900/50 p-4 rounded-lg max-h-64 overflow-y-auto whitespace-pre-wrap border border-gray-700"></div>
+            <div class="flex justify-end gap-4 mt-6">
+                <button id="closeNotesModalBtn" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="share-plan-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 rounded-lg p-8 w-full max-w-md">
+            <div id="share-confirm-view">
+                <h3 class="text-xl font-bold text-white mb-4">Confirm Sharing</h3>
+                <p class="text-gray-400 mb-4">Uploading this plan will make it publicly accessible via a link.</p>
+                <p class="text-gray-400 mb-6">To confirm, please type the plan name "<span id="share-plan-name-confirm" class="font-bold text-sky-400"></span>" below.</p>
+                <input type="text" id="shareConfirmInput" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500">
+                <div id="share-modal-error" class="text-red-400 text-sm h-4 mt-2"></div>
+                <div class="flex justify-end gap-4 mt-6">
+                    <button id="cancelShareBtn" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors">Cancel</button>
+                    <button id="confirmShareBtn" class="bg-sky-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-sky-600 transition-colors">Confirm & Share</button>
+                </div>
+            </div>
+            <div id="share-success-view" class="hidden">
+                <h3 class="text-xl font-bold text-white mb-4">Share this Link</h3>
+                <p class="text-gray-400 mb-6">Your plan has been uploaded. Copy the link below to share it.</p>
+                <div class="flex items-center gap-2">
+                     <input type="text" id="shareableLinkInput" readonly class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-300">
+                     <button id="copyLinkBtn" class="bg-sky-500 p-3 rounded-lg text-white hover:bg-sky-600">Copy</button>
+                </div>
+                <div class="text-right mt-6"><button id="closeShareModalBtn" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors">Close</button></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Feedback Button -->
+    <a href="https://forms.gle/Z1zft6N2j6jzKreH7" target="_blank" id="feedback-button" class="fixed bottom-5 right-5 bg-sky-500 text-white p-3 rounded-full shadow-lg hover:bg-sky-600 transition-transform transform hover:scale-110 z-50" title="Give Feedback & Suggestions">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+    </a>
+
+
+    <!-- External JavaScript -->
+    <script src="script.js" type="module" defer></script>
+
+</body>
+</html>
+

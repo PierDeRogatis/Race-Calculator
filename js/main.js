@@ -14,6 +14,7 @@ import {
     calculateSingleSplitTime, calculateTotalTimeForPace, findBestPaceForTargetTime, 
     generatePlanFromPace, formatTime, formatPace, calculateEffortPaceZones
 } from './calculations.js';
+import { initI18n } from './i18n.js';
 
 const { jsPDF } = window.jspdf;
 
@@ -24,7 +25,8 @@ let savedPlansCache = [];
 let currentlyEditingPlanId = null;
 let userPreferences = {};
 
-// Initialize theme on page load
+// Initialize i18n and theme on page load
+initI18n();
 loadTheme();
 
 onAuthStateChanged(auth, user => {

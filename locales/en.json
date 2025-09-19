@@ -1,0 +1,11 @@
+{
+  "main_title": "Race Strategy Modeler",
+  "login_prompt": "Sign in to manage your race plans.",
+  "email_placeholder": "Email",
+  "password_placeholder": "Password",
+  "forgot_password": "Forgot Password?",
+  "sign_in_button": "Sign In",
+  "create_account_button": "Create Account",
+  "or_divider": "OR",
+  "google_signin_button": "Sign in with Google"
+}

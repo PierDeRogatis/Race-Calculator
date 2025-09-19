@@ -1,0 +1,11 @@
+{
+  "main_title": "Modellatore di Strategie di Gara",
+  "login_prompt": "Accedi per gestire i tuoi piani di gara.",
+  "email_placeholder": "Email",
+  "password_placeholder": "Password",
+  "forgot_password": "Password dimenticata?",
+  "sign_in_button": "Accedi",
+  "create_account_button": "Crea Account",
+  "or_divider": "OPPURE",
+  "google_signin_button": "Accedi con Google"
+}

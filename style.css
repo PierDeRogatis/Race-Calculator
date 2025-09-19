@@ -123,3 +123,144 @@ tbody {
 .divide-y > * {
     border-color: var(--color-border) !important;
 }
+
+/* Additional comprehensive overrides */
+.text-gray-500 {
+    color: var(--color-text-secondary) !important;
+}
+
+.bg-gray-900\/50 {
+    background-color: var(--color-bg-secondary) !important;
+}
+
+.border-gray-800 {
+    border-color: var(--color-border) !important;
+}
+
+.text-sky-300:hover {
+    color: var(--color-accent) !important;
+    opacity: 0.8;
+}
+
+.hover\:text-sky-300:hover {
+    color: var(--color-accent) !important;
+    opacity: 0.8;
+}
+
+.text-red-400, .text-red-300 {
+    color: #ef4444 !important;
+}
+
+.hover\:text-red-300:hover {
+    color: #f87171 !important;
+}
+
+.text-green-400, .text-green-300 {
+    color: #22c55e !important;
+}
+
+.hover\:text-green-300:hover {
+    color: #4ade80 !important;
+}
+
+/* Placeholder text */
+.placeholder-gray-500::placeholder {
+    color: var(--color-text-secondary) !important;
+    opacity: 0.7;
+}
+
+/* Focus ring colors */
+.focus\:ring-4 {
+    --tw-ring-color: var(--color-accent) !important;
+}
+
+/* Shadow colors */
+.shadow-sky-500\/20 {
+    --tw-shadow-color: var(--color-accent) !important;
+    --tw-shadow: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -2px var(--tw-shadow-color) !important;
+}
+
+/* Gradient backgrounds */
+.bg-gradient-to-r {
+    background: linear-gradient(to right, var(--color-accent), var(--color-accent)) !important;
+}
+
+/* Modal and overlay backgrounds */
+.bg-black {
+    background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Ensure all text elements use proper colors */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-text-primary) !important;
+}
+
+p, span, div {
+    color: inherit;
+}
+
+/* Button hover states */
+.hover\:bg-purple-700:hover {
+    background-color: #7c3aed !important;
+}
+
+.bg-purple-600 {
+    background-color: #9333ea !important;
+}
+
+/* Specific element overrides */
+#login-view {
+    background-color: var(--color-bg-primary) !important;
+    color: var(--color-text-primary) !important;
+}
+
+#app-container {
+    background-color: var(--color-bg-primary) !important;
+    color: var(--color-text-primary) !important;
+}
+
+header {
+    background-color: var(--color-bg-primary) !important;
+    color: var(--color-text-primary) !important;
+}
+
+/* Chart container */
+.chart-container {
+    background-color: var(--color-bg-secondary) !important;
+    border-color: var(--color-border) !important;
+}
+
+/* Results table */
+#results table {
+    background-color: var(--color-bg-secondary) !important;
+}
+
+#results th {
+    color: var(--color-text-secondary) !important;
+    border-color: var(--color-border) !important;
+}
+
+#results td {
+    color: var(--color-text-primary) !important;
+    border-color: var(--color-border) !important;
+}
+
+/* Modals */
+.fixed.inset-0 > div {
+    background-color: var(--color-bg-secondary) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-text-primary) !important;
+}
+
+/* Override any remaining gray backgrounds */
+[class*="bg-gray"] {
+    background-color: var(--color-bg-secondary) !important;
+}
+
+[class*="border-gray"] {
+    border-color: var(--color-border) !important;
+}
+
+[class*="text-gray"] {
+    color: var(--color-text-secondary) !important;
+}

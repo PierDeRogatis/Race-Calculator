@@ -83,4 +83,13 @@ export const dom = {
     copyLinkBtn: document.getElementById('copyLinkBtn'),
     closeShareModalBtn: document.getElementById('closeShareModalBtn'),
     themeToggle: document.getElementById('theme-toggle'),
+    openPaceCalculatorBtn: document.getElementById('openPaceCalculatorBtn'),
+    paceCalculatorModal: document.getElementById('pace-calculator-modal'),
+    raceDistance: document.getElementById('raceDistance'),
+    raceTime: document.getElementById('raceTime'),
+    raceGain: document.getElementById('raceGain'),
+    calculateZonesBtn: document.getElementById('calculateZonesBtn'),
+    cancelPaceCalcBtn: document.getElementById('cancelPaceCalcBtn'),
+    paceZonesResults: document.getElementById('pace-zones-results'),
+    applyPaceToModelerBtn: document.getElementById('applyPaceToModelerBtn'),
 };

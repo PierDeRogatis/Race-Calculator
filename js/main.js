@@ -12,7 +12,7 @@ import {
 } from './ui.js';
 import { 
     calculateSingleSplitTime, calculateTotalTimeForPace, findBestPaceForTargetTime, 
-    generatePlanFromPace, formatTime, formatPace
+    generatePlanFromPace, formatTime, formatPace, calculateEffortPaceZones
 } from './calculations.js';
 
 const { jsPDF } = window.jspdf;
@@ -263,6 +263,13 @@ dom.getAiInsightsBtn.addEventListener('click', () => fetchAiInsights(currentPlan
     });
 });
 
+// Event delegation for checkpoint inputs
+dom.checkpointInputsContainer.addEventListener('input', (e) => {
+    if (e.target.tagName === 'INPUT') {
+        courseProfileChart = updateChartFromInputs(courseProfileChart);
+    }
+});
+
 dom.cancelShareBtn.addEventListener('click', resetShareModal);
 dom.closeShareModalBtn.addEventListener('click', resetShareModal);
 
@@ -303,6 +310,68 @@ dom.copyLinkBtn.addEventListener('click', () => {
 
 // Theme toggle
 dom.themeToggle.addEventListener('click', toggleTheme);
+
+// Pace calculator
+let calculatedGAP = null;
+
+dom.openPaceCalculatorBtn.addEventListener('click', () => {
+    dom.paceCalculatorModal.classList.remove('hidden');
+});
+
+dom.cancelPaceCalcBtn.addEventListener('click', () => {
+    dom.paceCalculatorModal.classList.add('hidden');
+    dom.paceZonesResults.classList.add('hidden');
+    dom.applyPaceToModelerBtn.classList.add('hidden');
+});
+
+dom.calculateZonesBtn.addEventListener('click', () => {
+    const distance = parseFloat(dom.raceDistance.value);
+    const time = parseFloat(dom.raceTime.value);
+    const gain = parseFloat(dom.raceGain.value) || 0;
+    
+    if (!distance || !time || distance <= 0 || time <= 0) {
+        showNotification('Please enter valid distance and time values.', true);
+        return;
+    }
+    
+    const zones = calculateEffortPaceZones(distance, time, gain);
+    calculatedGAP = zones.gapValue;
+    
+    dom.paceZonesResults.innerHTML = `
+        <h4 class="font-bold text-white mb-3">Your Training Zones</h4>
+        <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-gray-400">Flat-Equivalent Pace (GAP):</span><span class="font-bold text-sky-400">${zones.gap}/km</span></div>
+            <div class="flex justify-between"><span class="text-gray-400">Easy Pace:</span><span>${zones.easyPace}/km</span></div>
+            <div class="flex justify-between"><span class="text-gray-400">Marathon Pace:</span><span>${zones.marathonPace}/km</span></div>
+            <div class="flex justify-between"><span class="text-gray-400">Threshold Pace:</span><span>${zones.thresholdPace}/km</span></div>
+            <div class="flex justify-between"><span class="text-gray-400">Interval Pace:</span><span>${zones.intervalPace}/km</span></div>
+        </div>
+    `;
+    
+    dom.paceZonesResults.classList.remove('hidden');
+    dom.applyPaceToModelerBtn.classList.remove('hidden');
+});
+
+dom.applyPaceToModelerBtn.addEventListener('click', () => {
+    if (!calculatedGAP) return;
+    
+    const distance = parseFloat(dom.raceDistance.value);
+    const targetTimeMinutes = calculatedGAP * distance;
+    const hours = Math.floor(targetTimeMinutes / 60);
+    const minutes = Math.round(targetTimeMinutes % 60);
+    
+    dom.targetTimeHoursInput.value = hours;
+    dom.targetTimeMinsInput.value = minutes;
+    
+    dom.paceCalculatorModal.classList.add('hidden');
+    dom.paceZonesResults.classList.add('hidden');
+    dom.applyPaceToModelerBtn.classList.add('hidden');
+    
+    showNotification('Target time applied from your race result!');
+    
+    // Scroll to generate strategy button
+    dom.calculateBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
 
 dom.checkpointInputsContainer.addEventListener('click', e => {
     const action = e.target.dataset.action;

@@ -61,7 +61,6 @@ export function generateCheckpointInputs() {
             `;
             dom.checkpointInputsContainer.appendChild(div);
         }
-        dom.checkpointInputsContainer.querySelectorAll('input').forEach(input => input.addEventListener('input', updateChartFromInputs));
     } else {
         dom.strategySection.classList.add('hidden'); dom.chartSection.classList.add('hidden');
     }
@@ -217,7 +216,6 @@ export function createSplitRow(index, updateChartFromInputs) {
              <button data-action="delete" data-index="${index}" class="text-red-400 hover:text-red-300 text-2xl font-bold leading-none" title="Delete Split">&minus;</button>
         </div>
     `;
-    div.querySelectorAll('input').forEach(input => input.addEventListener('input', updateChartFromInputs));
     return div;
 }
 

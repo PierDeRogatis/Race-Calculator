@@ -126,3 +126,17 @@ export function formatPace(minutes) {
     const pad = (n) => n.toString().padStart(2, '0');
     return `${pad(Math.floor(totalSeconds / 60))}:${pad(totalSeconds % 60)}`;
 }
+
+export function calculateEffortPaceZones(raceDistanceKm, raceTimeMinutes, raceGainMeters) {
+    const flatEquivalentDistance = raceDistanceKm + (raceGainMeters / 100);
+    const gap = raceTimeMinutes / flatEquivalentDistance;
+    
+    return {
+        gap: formatPace(gap),
+        easyPace: formatPace(gap * 1.25),
+        marathonPace: formatPace(gap * 1.10),
+        thresholdPace: formatPace(gap * 1.02),
+        intervalPace: formatPace(gap * 0.95),
+        gapValue: gap
+    };
+}

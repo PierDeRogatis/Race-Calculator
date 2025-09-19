@@ -8,7 +8,7 @@ import {
 import { 
     showView, showNotification, setupUserProfile, generateCheckpointInputs, updateChartFromInputs,
     renderPlanManagementPage, createSplitRow, renumberSplits, loadPlanIntoUI, handleGpxFile,
-    resetShareModal, generatePdfDoc, fetchAiInsights, toggleTheme, loadSavedTheme
+    resetShareModal, generatePdfDoc, fetchAiInsights, toggleTheme, loadSavedTheme, validateInputs
 } from './ui.js';
 import { 
     calculateSingleSplitTime, calculateTotalTimeForPace, findBestPaceForTargetTime, 
@@ -325,6 +325,11 @@ dom.checkpointInputsContainer.addEventListener('click', e => {
 function runCalculationsAndUpdateUI() {
     const numCheckpoints = parseInt(dom.checkpointsInput.value);
     if (!numCheckpoints) return false;
+    
+    if (!validateInputs()) {
+        showNotification("Please enter valid positive numbers for all splits.", true);
+        return false;
+    }
     const targetTime = (parseFloat(dom.targetTimeHoursInput.value) || 0) * 60 + (parseFloat(dom.targetTimeMinsInput.value) || 0);
     const sliders = { 
         pacing: parseInt(dom.pacingStrategySlider.value), 

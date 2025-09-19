@@ -51,9 +51,9 @@ export function generateCheckpointInputs() {
             div.className = 'grid grid-cols-1 md:grid-cols-8 gap-x-4 gap-y-2 p-4 border border-gray-700 bg-gray-900/20 rounded-lg fade-in items-center';
             div.innerHTML = `
                 <h3 class="md:col-span-1 text-lg font-semibold text-gray-200">Split ${i}</h3>
-                <div class="md:col-span-2 relative"><label for="distance-${i}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Distance (km)</label><input type="number" id="distance-${i}" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
-                <div class="md:col-span-2 relative"><label for="gain-${i}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Gain (m)</label><input type="number" id="gain-${i}" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
-                <div class="md:col-span-2 relative"><label for="loss-${i}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Loss (m)</label><input type="number" id="loss-${i}" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
+                <div class="md:col-span-2 relative"><label for="distance-${i}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Distance (km)</label><input type="number" id="distance-${i}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
+                <div class="md:col-span-2 relative"><label for="gain-${i}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Gain (m)</label><input type="number" id="gain-${i}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
+                <div class="md:col-span-2 relative"><label for="loss-${i}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Loss (m)</label><input type="number" id="loss-${i}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
                 <div class="md:col-span-1 flex items-center justify-end gap-2">
                      <button data-action="add" data-index="${i}" class="text-green-400 hover:text-green-300 text-2xl font-bold leading-none" title="Add Split Below">&plus;</button>
                      <button data-action="delete" data-index="${i}" class="text-red-400 hover:text-red-300 text-2xl font-bold leading-none ${numCheckpoints > 1 ? '' : 'hidden'}" title="Delete Split">&minus;</button>
@@ -209,9 +209,9 @@ export function createSplitRow(index, updateChartFromInputs) {
      div.className = 'grid grid-cols-1 md:grid-cols-8 gap-x-4 gap-y-2 p-4 border border-gray-700 bg-gray-900/20 rounded-lg fade-in items-center';
      div.innerHTML = `
         <h3 class="md:col-span-1 text-lg font-semibold text-gray-200">Split ${index}</h3>
-        <div class="md:col-span-2 relative"><label for="distance-${index}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Distance (km)</label><input type="number" id="distance-${index}" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
-        <div class="md:col-span-2 relative"><label for="gain-${index}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Gain (m)</label><input type="number" id="gain-${index}" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
-        <div class="md:col-span-2 relative"><label for="loss-${index}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Loss (m)</label><input type="number" id="loss-${index}" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
+        <div class="md:col-span-2 relative"><label for="distance-${index}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Distance (km)</label><input type="number" id="distance-${index}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
+        <div class="md:col-span-2 relative"><label for="gain-${index}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Gain (m)</label><input type="number" id="gain-${index}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
+        <div class="md:col-span-2 relative"><label for="loss-${index}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Loss (m)</label><input type="number" id="loss-${index}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
         <div class="md:col-span-1 flex items-center justify-end gap-2">
              <button data-action="add" data-index="${index}" class="text-green-400 hover:text-green-300 text-2xl font-bold leading-none" title="Add Split Below">&plus;</button>
              <button data-action="delete" data-index="${index}" class="text-red-400 hover:text-red-300 text-2xl font-bold leading-none" title="Delete Split">&minus;</button>
@@ -396,6 +396,45 @@ export function generatePdfDoc(currentPlan) {
     }
 
     return doc;
+}
+
+export function validateInputs() {
+    const rows = Array.from(dom.checkpointInputsContainer.children);
+    let isValid = true;
+    
+    // Remove old red borders
+    rows.forEach(row => {
+        row.querySelectorAll('input').forEach(input => {
+            input.classList.remove('border-red-500');
+        });
+    });
+    
+    // Validate each row
+    rows.forEach((row, index) => {
+        const i = index + 1;
+        const distanceInput = document.getElementById(`distance-${i}`);
+        const gainInput = document.getElementById(`gain-${i}`);
+        const lossInput = document.getElementById(`loss-${i}`);
+        
+        const distance = parseFloat(distanceInput.value);
+        const gain = parseFloat(gainInput.value);
+        const loss = parseFloat(lossInput.value);
+        
+        if (isNaN(distance) || distance < 0) {
+            distanceInput.classList.add('border-red-500');
+            isValid = false;
+        }
+        if (isNaN(gain) || gain < 0) {
+            gainInput.classList.add('border-red-500');
+            isValid = false;
+        }
+        if (isNaN(loss) || loss < 0) {
+            lossInput.classList.add('border-red-500');
+            isValid = false;
+        }
+    });
+    
+    return isValid;
 }
 
 export function toggleTheme() {

@@ -454,6 +454,50 @@ export function loadTheme() {
     }
 }
 
+export function resetApp(courseProfileChart, currentPlan, currentlyEditingPlanId, showNotification) {
+    // Clear GPX input
+    dom.gpxFileInput.value = '';
+    dom.gpxStatus.textContent = '';
+
+    // Clear checkpoint inputs
+    dom.checkpointsInput.value = '10'; // or a default value
+    dom.checkpointInputsContainer.innerHTML = '';
+    dom.checkpointsInput.disabled = false;
+
+    // Hide sections
+    dom.resultsSection.classList.add('hidden');
+    dom.strategySection.classList.add('hidden');
+    dom.chartSection.classList.add('hidden');
+    dom.aiInsightsContainer.classList.add('hidden');
+
+    // Reset sliders and target time
+    dom.pacingStrategySlider.value = 0;
+    dom.uphillEffortSlider.value = 0;
+    dom.downhillEffortSlider.value = 0;
+    dom.temperatureSlider.value = 15;
+    dom.targetTimeHoursInput.value = '10';
+    dom.targetTimeMinsInput.value = '30';
+
+    // Reset dropdown
+    dom.savedPlansDropdown.value = "";
+
+    // Reset the chart (if it exists)
+    if (courseProfileChart) {
+        courseProfileChart.destroy();
+        courseProfileChart = null;
+    }
+
+    // Clear current plan and editing state
+    Object.keys(currentPlan).forEach(key => delete currentPlan[key]);
+    currentPlan.gpxContent = null;
+    currentlyEditingPlanId = null;
+
+    // Show a confirmation
+    showNotification('App has been reset.');
+    
+    return { courseProfileChart, currentlyEditingPlanId };
+}
+
 export async function fetchAiInsights(currentPlan) {
     dom.aiInsightsContainer.classList.remove('hidden'); dom.aiInsightsLoading.style.display = 'flex'; dom.aiInsightsContent.classList.add('hidden'); dom.aiInsightsError.classList.add('hidden');
     const getStrategyText = (v, o) => (v > 3 ? o[2] : v < -3 ? o[0] : o[1]);

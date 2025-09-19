@@ -92,4 +92,5 @@ export const dom = {
     cancelPaceCalcBtn: document.getElementById('cancelPaceCalcBtn'),
     paceZonesResults: document.getElementById('pace-zones-results'),
     applyPaceToModelerBtn: document.getElementById('applyPaceToModelerBtn'),
+    resetAppBtn: document.getElementById('resetAppBtn'),
 };

@@ -8,7 +8,7 @@ import {
 import { 
     showView, showNotification, setupUserProfile, generateCheckpointInputs, updateChartFromInputs,
     renderPlanManagementPage, createSplitRow, renumberSplits, loadPlanIntoUI, handleGpxFile,
-    resetShareModal, generatePdfDoc, fetchAiInsights, toggleTheme, loadTheme, validateInputs
+    resetShareModal, generatePdfDoc, fetchAiInsights, toggleTheme, loadTheme, validateInputs, resetApp
 } from './ui.js';
 import { 
     calculateSingleSplitTime, calculateTotalTimeForPace, findBestPaceForTargetTime, 
@@ -310,6 +310,13 @@ dom.copyLinkBtn.addEventListener('click', () => {
 
 // Theme toggle
 dom.themeToggle.addEventListener('click', toggleTheme);
+
+// Reset app
+dom.resetAppBtn.addEventListener('click', () => {
+    const result = resetApp(courseProfileChart, currentPlan, currentlyEditingPlanId, showNotification);
+    courseProfileChart = result.courseProfileChart;
+    currentlyEditingPlanId = result.currentlyEditingPlanId;
+});
 
 // Pace calculator
 let calculatedGAP = null;

@@ -30,11 +30,11 @@ export function showNotification(message, isError = false) {
 export function setupUserProfile(user, userPreferences, signOut, auth) {
     const displayName = userPreferences.username || user.displayName || user.email.split('@')[0];
     dom.userProfile.innerHTML = `
-        <span class="text-gray-300 hidden md:inline">${displayName}</span>
-        <img src="${user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=38bdf8&color=fff`}" alt="User Photo" class="w-10 h-10 rounded-full border-2 border-sky-400">
-        <button id="profileBtn" class="bg-gray-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition-colors">Profile</button>
-        <button id="libraryBtn" class="bg-gray-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition-colors">Course Library</button>
-        <button id="signOutBtn" class="bg-gray-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors">Sign Out</button>
+        <span class="text-gray-700 dark:text-gray-300 hidden md:inline">${displayName}</span>
+        <img src="${user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=38bdf8&color=fff`}" alt="User Photo" class="w-10 h-10 rounded-full border-2 border-sky-500 dark:border-sky-400">
+        <button id="profileBtn" class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-500 dark:hover:bg-sky-600 transition-colors">Profile</button>
+        <button id="libraryBtn" class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-500 dark:hover:bg-sky-600 transition-colors">Course Library</button>
+        <button id="signOutBtn" class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-bold py-2 px-4 rounded-lg hover:bg-red-500 dark:hover:bg-red-600 transition-colors">Sign Out</button>
     `;
     document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
     document.getElementById('profileBtn').addEventListener('click', () => showView('profileView'));
@@ -48,15 +48,15 @@ export function generateCheckpointInputs() {
         dom.strategySection.classList.remove('hidden'); dom.chartSection.classList.remove('hidden');
         for (let i = 1; i <= numCheckpoints; i++) {
             const div = document.createElement('div');
-            div.className = 'grid grid-cols-1 md:grid-cols-8 gap-x-4 gap-y-2 p-4 border border-gray-700 bg-gray-900/20 rounded-lg fade-in items-center';
+            div.className = 'grid grid-cols-1 md:grid-cols-8 gap-x-4 gap-y-2 p-4 border border-gray-300 dark:border-gray-700 bg-gray-100/20 dark:bg-gray-900/20 rounded-lg fade-in items-center';
             div.innerHTML = `
-                <h3 class="md:col-span-1 text-lg font-semibold text-gray-200">Split ${i}</h3>
-                <div class="md:col-span-2 relative"><label for="distance-${i}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Distance (km)</label><input type="number" id="distance-${i}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
-                <div class="md:col-span-2 relative"><label for="gain-${i}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Gain (m)</label><input type="number" id="gain-${i}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
-                <div class="md:col-span-2 relative"><label for="loss-${i}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Loss (m)</label><input type="number" id="loss-${i}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
+                <h3 class="md:col-span-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Split ${i}</h3>
+                <div class="md:col-span-2 relative"><label for="distance-${i}" class="absolute -top-2 left-2 inline-block bg-white dark:bg-gray-800 px-1 text-xs font-medium text-gray-600 dark:text-gray-400">Distance (km)</label><input type="number" id="distance-${i}" min="0" class="block w-full bg-transparent border-gray-400 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100"></div>
+                <div class="md:col-span-2 relative"><label for="gain-${i}" class="absolute -top-2 left-2 inline-block bg-white dark:bg-gray-800 px-1 text-xs font-medium text-gray-600 dark:text-gray-400">Gain (m)</label><input type="number" id="gain-${i}" min="0" class="block w-full bg-transparent border-gray-400 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100"></div>
+                <div class="md:col-span-2 relative"><label for="loss-${i}" class="absolute -top-2 left-2 inline-block bg-white dark:bg-gray-800 px-1 text-xs font-medium text-gray-600 dark:text-gray-400">Loss (m)</label><input type="number" id="loss-${i}" min="0" class="block w-full bg-transparent border-gray-400 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100"></div>
                 <div class="md:col-span-1 flex items-center justify-end gap-2">
-                     <button data-action="add" data-index="${i}" class="text-green-400 hover:text-green-300 text-2xl font-bold leading-none" title="Add Split Below">&plus;</button>
-                     <button data-action="delete" data-index="${i}" class="text-red-400 hover:text-red-300 text-2xl font-bold leading-none ${numCheckpoints > 1 ? '' : 'hidden'}" title="Delete Split">&minus;</button>
+                     <button data-action="add" data-index="${i}" class="text-green-500 dark:text-green-400 hover:text-green-600 dark:hover:text-green-300 text-2xl font-bold leading-none" title="Add Split Below">&plus;</button>
+                     <button data-action="delete" data-index="${i}" class="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 text-2xl font-bold leading-none ${numCheckpoints > 1 ? '' : 'hidden'}" title="Delete Split">&minus;</button>
                 </div>
             `;
             dom.checkpointInputsContainer.appendChild(div);
@@ -107,38 +107,38 @@ export function renderPlanManagementPage(currentUser, savedPlansCache, loadUserP
         }
         savedPlansCache.forEach(plan => {
             const card = document.createElement('div');
-            card.className = 'bg-gray-900/50 p-6 rounded-lg border border-gray-700 flex flex-col';
-            const isPublicBadge = plan.isPublic ? `<span class="text-xs font-semibold bg-sky-500/20 text-sky-300 px-2 py-1 rounded-full">Public</span>` : '';
+            card.className = 'bg-gray-100/50 dark:bg-gray-900/50 p-6 rounded-lg border border-gray-300 dark:border-gray-700 flex flex-col';
+            const isPublicBadge = plan.isPublic ? `<span class="text-xs font-semibold bg-sky-500/20 text-sky-700 dark:text-sky-300 px-2 py-1 rounded-full">Public</span>` : '';
             const publishButtonText = plan.isPublic ? 'Unpublish' : 'Publish';
             const publishButtonClass = plan.isPublic ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700';
-            const raceDateHtml = plan.raceDate ? `<p class="text-sm font-bold text-sky-300">${new Date(plan.raceDate + 'T00:00:00').toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</p>` : '';
-            const notesButtonHtml = plan.notes ? `<button class="view-notes-btn text-xs text-gray-400 hover:text-white">View Notes</button>` : '';
+            const raceDateHtml = plan.raceDate ? `<p class="text-sm font-bold text-sky-700 dark:text-sky-300">${new Date(plan.raceDate + 'T00:00:00').toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</p>` : '';
+            const notesButtonHtml = plan.notes ? `<button class="view-notes-btn text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">View Notes</button>` : '';
             
             card.innerHTML = `
                 <div class="flex-grow">
                     <div class="flex justify-between items-start">
-                         <h4 class="text-lg font-bold text-white truncate pr-2">${plan.name}</h4>
+                         <h4 class="text-lg font-bold text-gray-900 dark:text-white truncate pr-2">${plan.name}</h4>
                          ${isPublicBadge}
                     </div>
                     ${raceDateHtml}
-                    <p class="text-sm text-gray-500 mb-4">Saved: ${plan.createdAt ? new Date(plan.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
-                    <div class="text-sm space-y-1 text-gray-300">
+                    <p class="text-sm text-gray-600 dark:text-gray-500 mb-4">Saved: ${plan.createdAt ? new Date(plan.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                    <div class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
                         <p><strong>Distance:</strong> ${plan.totalStats.distance.toFixed(1)} km</p>
                         <p><strong>Time:</strong> ${plan.totalStats.time}</p>
                         <p><strong>Gain:</strong> ${plan.totalStats.gain} m</p>
                     </div>
                 </div>
-                <div class="border-t border-gray-700 mt-4 pt-4">
+                <div class="border-t border-gray-300 dark:border-gray-700 mt-4 pt-4">
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-2">
                             ${notesButtonHtml}
                         </div>
                         <div class="flex gap-2">
                              <button class="publish-plan-btn text-xs ${publishButtonClass} text-white font-semibold py-1 px-3 rounded-md transition-colors">${publishButtonText}</button>
-                             <button class="delete-plan-btn text-xs bg-gray-600 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-md transition-colors">Delete</button>
+                             <button class="delete-plan-btn text-xs bg-gray-500 dark:bg-gray-600 hover:bg-red-500 dark:hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-md transition-colors">Delete</button>
                         </div>
                     </div>
-                    <button class="edit-plan-btn w-full bg-gray-700 hover:bg-sky-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">Edit Plan</button>
+                    <button class="edit-plan-btn w-full bg-gray-200 dark:bg-gray-700 hover:bg-sky-500 dark:hover:bg-sky-600 text-gray-900 dark:text-white font-semibold py-2 px-4 rounded-lg transition-colors">Edit Plan</button>
                 </div>
             `;
 
@@ -205,15 +205,15 @@ export function renderPlanManagementPage(currentUser, savedPlansCache, loadUserP
 
 export function createSplitRow(index, updateChartFromInputs) {
      const div = document.createElement('div');
-     div.className = 'grid grid-cols-1 md:grid-cols-8 gap-x-4 gap-y-2 p-4 border border-gray-700 bg-gray-900/20 rounded-lg fade-in items-center';
+     div.className = 'grid grid-cols-1 md:grid-cols-8 gap-x-4 gap-y-2 p-4 border border-gray-300 dark:border-gray-700 bg-gray-100/20 dark:bg-gray-900/20 rounded-lg fade-in items-center';
      div.innerHTML = `
-        <h3 class="md:col-span-1 text-lg font-semibold text-gray-200">Split ${index}</h3>
-        <div class="md:col-span-2 relative"><label for="distance-${index}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Distance (km)</label><input type="number" id="distance-${index}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
-        <div class="md:col-span-2 relative"><label for="gain-${index}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Gain (m)</label><input type="number" id="gain-${index}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
-        <div class="md:col-span-2 relative"><label for="loss-${index}" class="absolute -top-2 left-2 inline-block bg-gray-800 px-1 text-xs font-medium text-gray-400">Loss (m)</label><input type="number" id="loss-${index}" min="0" class="block w-full bg-transparent border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-500"></div>
+        <h3 class="md:col-span-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Split ${index}</h3>
+        <div class="md:col-span-2 relative"><label for="distance-${index}" class="absolute -top-2 left-2 inline-block bg-white dark:bg-gray-800 px-1 text-xs font-medium text-gray-600 dark:text-gray-400">Distance (km)</label><input type="number" id="distance-${index}" min="0" class="block w-full bg-transparent border-gray-400 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100"></div>
+        <div class="md:col-span-2 relative"><label for="gain-${index}" class="absolute -top-2 left-2 inline-block bg-white dark:bg-gray-800 px-1 text-xs font-medium text-gray-600 dark:text-gray-400">Gain (m)</label><input type="number" id="gain-${index}" min="0" class="block w-full bg-transparent border-gray-400 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100"></div>
+        <div class="md:col-span-2 relative"><label for="loss-${index}" class="absolute -top-2 left-2 inline-block bg-white dark:bg-gray-800 px-1 text-xs font-medium text-gray-600 dark:text-gray-400">Loss (m)</label><input type="number" id="loss-${index}" min="0" class="block w-full bg-transparent border-gray-400 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-sky-500 focus:border-sky-500 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100"></div>
         <div class="md:col-span-1 flex items-center justify-end gap-2">
-             <button data-action="add" data-index="${index}" class="text-green-400 hover:text-green-300 text-2xl font-bold leading-none" title="Add Split Below">&plus;</button>
-             <button data-action="delete" data-index="${index}" class="text-red-400 hover:text-red-300 text-2xl font-bold leading-none" title="Delete Split">&minus;</button>
+             <button data-action="add" data-index="${index}" class="text-green-500 dark:text-green-400 hover:text-green-600 dark:hover:text-green-300 text-2xl font-bold leading-none" title="Add Split Below">&plus;</button>
+             <button data-action="delete" data-index="${index}" class="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 text-2xl font-bold leading-none" title="Delete Split">&minus;</button>
         </div>
     `;
     return div;
@@ -436,21 +436,19 @@ export function validateInputs() {
 }
 
 export function toggleTheme() {
-    const body = document.body;
-    body.classList.toggle('light-mode');
-
-    // Save the user's preference
-    if (body.classList.contains('light-mode')) {
-        localStorage.setItem('theme', 'light');
-    } else {
+    const htmlEl = document.documentElement;
+    htmlEl.classList.toggle('dark');
+    if (htmlEl.classList.contains('dark')) {
         localStorage.setItem('theme', 'dark');
+    } else {
+        localStorage.setItem('theme', 'light');
     }
 }
 
 export function loadTheme() {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
-        document.body.classList.add('light-mode');
+    if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
     }
 }
 

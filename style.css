@@ -1,29 +1,31 @@
 :root {
-    --bg-primary: #111827;
-    --bg-secondary: #1f2937;
-    --bg-tertiary: #374151;
-    --text-primary: #f9fafb;
-    --text-secondary: #d1d5db;
-    --text-muted: #9ca3af;
-    --border-color: #374151;
-    --accent-color: #38bdf8;
-}
-
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
+    --color-bg-primary: #111827;
+    --color-bg-secondary: #1f2937;
+    --color-border: #374151;
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #d1d5db;
+    --color-accent: #38bdf8;
 }
 
 body.light-mode {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f9fafb;
-    --bg-tertiary: #e5e7eb;
-    --text-primary: #111827;
-    --text-secondary: #374151;
-    --text-muted: #6b7280;
-    --border-color: #d1d5db;
-    --accent-color: #0ea5e9;
+    --color-bg-primary: #f9fafb;
+    --color-bg-secondary: #f3f4f6;
+    --color-border: #d1d5db;
+    --color-text-primary: #111827;
+    --color-text-secondary: #374151;
+    --color-accent: #0ea5e9;
+}
+
+/* Update a few key elements to use these variables */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+}
+
+main {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border);
 }
 .fade-in { animation: fadeIn 0.5s ease-in-out; }
 .fade-out { animation: fadeOut 0.5s ease-in-out forwards; }

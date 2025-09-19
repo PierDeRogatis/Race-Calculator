@@ -8,7 +8,7 @@ import {
 import { 
     showView, showNotification, setupUserProfile, generateCheckpointInputs, updateChartFromInputs,
     renderPlanManagementPage, createSplitRow, renumberSplits, loadPlanIntoUI, handleGpxFile,
-    resetShareModal, generatePdfDoc, fetchAiInsights, toggleTheme, loadSavedTheme, validateInputs
+    resetShareModal, generatePdfDoc, fetchAiInsights, toggleTheme, loadTheme, validateInputs
 } from './ui.js';
 import { 
     calculateSingleSplitTime, calculateTotalTimeForPace, findBestPaceForTargetTime, 
@@ -25,7 +25,7 @@ let currentlyEditingPlanId = null;
 let userPreferences = {};
 
 // Initialize theme on page load
-loadSavedTheme();
+loadTheme();
 
 onAuthStateChanged(auth, user => {
     dom.authError.textContent = '';

@@ -320,6 +320,7 @@ dom.resetAppBtn.addEventListener('click', () => {
 
 // Pace calculator
 let calculatedGAP = null;
+let lastCalculatedGAP = null;
 
 dom.openPaceCalculatorBtn.addEventListener('click', () => {
     dom.paceCalculatorModal.classList.remove('hidden');
@@ -343,6 +344,7 @@ dom.calculateZonesBtn.addEventListener('click', () => {
     
     const zones = calculateEffortPaceZones(distance, time, gain);
     calculatedGAP = zones.gapValue;
+    lastCalculatedGAP = zones.gapValue;
     
     dom.paceZonesResults.innerHTML = `
         <h4 class="font-bold text-white mb-3">Your Training Zones</h4>
@@ -360,24 +362,48 @@ dom.calculateZonesBtn.addEventListener('click', () => {
 });
 
 dom.applyPaceToModelerBtn.addEventListener('click', () => {
-    if (!calculatedGAP) return;
-    
-    const distance = parseFloat(dom.raceDistance.value);
-    const targetTimeMinutes = calculatedGAP * distance;
-    const hours = Math.floor(targetTimeMinutes / 60);
-    const minutes = Math.round(targetTimeMinutes % 60);
-    
+    if (lastCalculatedGAP === null) {
+        showNotification('Please calculate pace zones first.', true);
+        return;
+    }
+
+    // Get the current course data from the UI
+    const numCheckpoints = parseInt(dom.checkpointsInput.value);
+    if (!numCheckpoints) {
+        showNotification('Please define your course before applying a pace.', true);
+        return;
+    }
+    const checkpointData = Array.from({ length: numCheckpoints }, (_, i) => ({
+        distance: parseFloat(document.getElementById(`distance-${i + 1}`).value) || 0,
+        gain: parseFloat(document.getElementById(`gain-${i + 1}`).value) || 0,
+        loss: parseFloat(document.getElementById(`loss-${i + 1}`).value) || 0,
+    }));
+
+    // Get current slider values
+    const sliders = {
+        pacing: parseInt(dom.pacingStrategySlider.value),
+        uphill: parseInt(dom.uphillEffortSlider.value),
+        downhill: parseInt(dom.downhillEffortSlider.value),
+        temp: parseInt(dom.temperatureSlider.value)
+    };
+
+    // Directly generate the race plan using the GAP as the base pace
+    generatePlanFromPace(lastCalculatedGAP, checkpointData, sliders, userPreferences, dom, currentPlan, currentlyEditingPlanId, savedPlansCache);
+
+    // Update the "Target Time" inputs to match the new plan's total time
+    const totalTimeInMinutes = currentPlan.totalStats.timeInMinutes;
+    const hours = Math.floor(totalTimeInMinutes / 60);
+    const minutes = Math.round(totalTimeInMinutes % 60);
     dom.targetTimeHoursInput.value = hours;
     dom.targetTimeMinsInput.value = minutes;
-    
+
+    // Close modal
     dom.paceCalculatorModal.classList.add('hidden');
     dom.paceZonesResults.classList.add('hidden');
     dom.applyPaceToModelerBtn.classList.add('hidden');
     
-    showNotification('Target time applied from your race result!');
-    
-    // Scroll to generate strategy button
-    dom.calculateBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    showNotification('Race plan generated from your calculated fitness level!');
+    dom.resultsSection.scrollIntoView({ behavior: 'smooth' });
 });
 
 dom.checkpointInputsContainer.addEventListener('click', e => {

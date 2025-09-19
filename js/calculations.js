@@ -105,7 +105,7 @@ export function generatePlanFromPace(basePace, checkpointData, sliders, userPref
         name: planName, 
         raceDate: dom.planDateInput.value || null,
         notes: dom.planNotesInput.value || null,
-        totalStats: { distance: totalDistance, gain: totalGain, loss: totalLoss, time: formatTime(totalTime), pace: formatPace(totalPace) + " /km", carbs: totalCarbs, water: totalWater, salts: totalSalts },
+        totalStats: { distance: totalDistance, gain: totalGain, loss: totalLoss, time: formatTime(totalTime), pace: formatPace(totalPace) + " /km", carbs: totalCarbs, water: totalWater, salts: totalSalts, timeInMinutes: totalTime },
         splits: splits.map((s, i) => ({ name: `Split ${i + 1} (${s.distance.toFixed(1)}km, +${s.gain}m, -${s.loss}m)`, time: formatTime(s.time), pace: `${s.pace} /km`, carbs: `${s.carbs} g`, water: `${s.water} ml`, salts: `${s.salts} mg` })),
         checkpoints: checkpointData, sliders, targetTime: { hours: dom.targetTimeHoursInput.value, mins: dom.targetTimeMinsInput.value }
     });
